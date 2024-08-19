@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import optimize
 
 
 def f(x):
@@ -20,15 +21,20 @@ def Newton_Raphson(f, dx,x0, N, tol):
 
         x = x_new
 
+x = np.linspace(0.5, 2.5, 1000)
+
 raiz = Newton_Raphson(f, derivada, 2,100000,1e-9)
 print(raiz)
 
-x = np.linspace(0.5, 2.5, 1000)
+raizSp = optimize.newton(f, 2,tol=1e-9)
+print(raizSp)
+
 
 fig, ax = plt.subplots()
 
 plt.plot(x, f(x))
 plt.scatter(raiz,f(raiz),color='r')
+plt.scatter(raizSp,f(raizSp),color='green')
 plt.axhline(y=0, color='grey', linestyle='--', linewidth=1)
 
 plt.show()
