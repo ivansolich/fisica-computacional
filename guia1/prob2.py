@@ -24,8 +24,14 @@ class DifferentiationApproximation:
     def central_difference(self, h):
         return (self.func(self.t + 0.5 * h) - self.func(self.t - 0.5 * h)) / h
 
+    def extrapolated_difference(self, h):
+        term1 = (self.func(self.t + h) - self.func(self.t - h)) / (2 * h)
+        term2 = (self.func(self.t + 2 * h) - self.func(self.t - 2 * h)) / (4 * h)
+        return (4 / 3) * term1 - (1 / 3) * term2
+
     def relative_error(self, approx_derivative, h):
         return abs((self.true_derivative(self.t) - approx_derivative(h)) / self.true_derivative(self.t))
+
 
     def calculate(self):
         h = self.h0
@@ -33,6 +39,7 @@ class DifferentiationApproximation:
         h_values = []
         error_fd = []
         error_cd = []
+        error_ed = []
 
         for i in range(self.num_iterations):  # Calcula las derivadas para un conjunto de h
             if h > self.machineEpsilon():
@@ -40,6 +47,8 @@ class DifferentiationApproximation:
 
                 error_fd.append(self.relative_error(self.forward_difference, h))
                 error_cd.append(self.relative_error(self.central_difference, h))
+                error_ed.append(self.relative_error(self.extrapolated_difference, h))
+
 
                 h = h / 2  #
             else:
@@ -48,11 +57,12 @@ class DifferentiationApproximation:
         h_values = np.array(h_values)
         error_fd = np.array(error_fd)
         error_cd = np.array(error_cd)
+        error_ed = np.array(error_ed)
 
-        return h_values, error_fd, error_cd
+        return h_values, error_fd, error_cd, error_ed
 
     # Creo las figuras error relativo vs h, y las guardo como variable
-    def create_plot(self, h_values, error_fd, error_cd):
+    def create_plot(self, h_values, error_fd, error_cd, error_ed):
         plt.rcParams['mathtext.fontset'] = 'stix'
         plt.rcParams['font.family'] = 'STIXGeneral'
         plt.rcParams.update({'font.size': 13})
@@ -63,6 +73,7 @@ class DifferentiationApproximation:
 
         ax.loglog(h_values, error_fd, label='Forward Difference')
         ax.loglog(h_values, error_cd, label='Central Difference')
+        ax.loglog(h_values, error_ed, label='Extrapolated Difference')
 
         ax.set_xlabel(r'$h$')
         ax.set_ylabel(r'Error relativo $|\epsilon|$')
@@ -70,16 +81,19 @@ class DifferentiationApproximation:
         ax.legend()
         ax.grid(True, which="both", ls="--")
 
+
+
         return fig
 
 
 def final_deployment(func, dx, nombre):  # Parametros, funcion, derivada exacta, y nombre de la funcion como string
     figures = []
 
-    for i in [0.1, 1, 10]:  # Para cada tiempo solicitado creo un objeto
+    for i in [0.1, 1, 100]:  # Para cada tiempo solicitado creo un objeto
         diff = DifferentiationApproximation(func, dx, i, 0.01)
-        h_values, error_fd, error_cd = diff.calculate()  # Calculo los errores para h
-        fig = diff.create_plot(h_values, error_fd, error_cd)  # Creo las figuras
+        h_values, error_fd, error_cd, error_ed = diff.calculate()  # Calculo los errores para h
+        fig = diff.create_plot(h_values, error_fd, error_cd, error_ed)  # Creo las figuras
+        fig.savefig(f"{nombre}_{i}.png")
         figures.append(fig)  # Y las agrego a una lista
 
     def combine_figures(figures):  # Esto crea una figura conjunta con las 3 figuras
@@ -112,6 +126,8 @@ def final_deployment(func, dx, nombre):  # Parametros, funcion, derivada exacta,
     combined_fig = combine_figures(figures)
 
     combined_fig.show()
+
+    combined_fig.savefig(f"{nombre}.png")
 
 
 def func_cos(t):
