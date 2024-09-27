@@ -18,7 +18,6 @@ class Integration():
         integral *= h
         return integral
 
-    # Regla de Simpson
     def simpson_rule(self, N):
         #if N % 2 == 1:
         #    N += 1
@@ -35,11 +34,10 @@ class Integration():
 
         xi, wi = np.polynomial.legendre.leggauss(n)
 
-        # Transformar los puntos de cuadratura al intervalo [a, b]
-        xi_trans = 0.5 * (xi + 1) * (self.b - self.a) + self.a
+        xi_trans = 0.5 * (xi + 1) * (self.b - self.a) + self.a  # Transforma los puntos de cuadratura al intervalo[a, b]
         wi_trans = 0.5 * (self.b - self.a) * wi
 
-        # Calcular la integral usando la fórmula de cuadratura de Gauss-Legendre
+        # Calcula la integral usando la fórmula de cuadratura de Gauss-Legendre
         integral = np.sum(wi_trans * self.f(xi_trans))
 
         return integral
@@ -64,7 +62,7 @@ class Integration():
             error_s.append(abs((S - exact_value) / exact_value))
             error_g.append(abs((G - exact_value) / exact_value))
 
-        error_g[2] = 4.5e-15
+        #error_g[2] = 4.5e-15
 
         error_t = np.array(error_t)
         error_s = np.array(error_s)
