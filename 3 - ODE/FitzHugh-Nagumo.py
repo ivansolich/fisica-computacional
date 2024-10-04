@@ -49,7 +49,6 @@ def simulate_system(t_max, dt, a, I):
 
 
 def plot_simulation(t, v, w, a, I, sim_number):
-
     plt.style.use('seaborn-v0_8-muted')
 
     plt.rcParams['mathtext.fontset'] = 'stix'
@@ -57,8 +56,8 @@ def plot_simulation(t, v, w, a, I, sim_number):
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
-    ax1.plot(t, v, label='Potencial de membrana (v)', lw=2)
-    ax1.plot(t, w, label='Variable de recuperación (w)', ls="--", lw=2)
+    ax1.plot(t, v, label='Potencial de membrana (v)')
+    ax1.plot(t, w, label='Variable de recuperación (w)', ls="--")
     ax1.set_title(f'Soluciones del sistema')
     ax1.set_xlabel('Tiempo')
     ax1.set_ylabel('v, w')
@@ -70,17 +69,25 @@ def plot_simulation(t, v, w, a, I, sim_number):
     margin = 0.1 * (v_max - v_min)
     ax1.set_ylim(min(v_min, w_min) - margin, max(v_max, w_max) + margin)
 
-    ax2.plot(v, w, lw=2, label='Trayectoria')
+    ax2.plot(v, w, label='Trayectoria')
 
     v_vals = np.linspace(v_min - margin, v_max + margin, 500)
 
     # Nullcline dv/dt = 0
     w_nullcline_v = v_vals * (v_vals - a) * (1 - v_vals) + I
-    ax2.plot(v_vals, w_nullcline_v, label=r'$\frac{dv}{dt} = 0$', color='green', linestyle='--')
+    ax2.plot(v_vals, w_nullcline_v, label=r'$\frac{dv}{dt} = 0$', linestyle='--')
 
     # Nullcline dw/dt = 0
     w_nullcline_w = v_vals / gamma
-    ax2.plot(v_vals, w_nullcline_w, label=r'$\frac{dw}{dt} = 0$', color='red', linestyle='--')
+    ax2.plot(v_vals, w_nullcline_w, label=r'$\frac{dw}{dt} = 0$', linestyle='--')
+
+    """V, W = np.meshgrid(np.linspace(min(v), max(v), 15),
+                       np.linspace(min(w), max(w), 15))
+    dv, dw = f(V, W, a, I)
+    ax2.quiver(V, W, dv, dw, color='gray', alpha=0.5)"""
+
+    #ax2.axhline(y=0, color='black', linestyle=(0, (3, 1, 1, 1, 1, 1)), alpha=0.5)
+    #ax2.axvline(x=0, color='black', linestyle=(0, (3, 1, 1, 1, 1, 1)), alpha=0.5)
 
     ax2.set_title(f'Diagrama de fases')
     ax2.set_xlabel('v')
@@ -88,7 +95,6 @@ def plot_simulation(t, v, w, a, I, sim_number):
 
     margin_w = 0.1 * (np.max(w) - np.min(w))
     ax2.set_ylim(np.min(w) - margin_w, np.max(w) + margin_w)
-
 
     fig.tight_layout()
 
@@ -114,7 +120,6 @@ t2, v2, w2 = simulate_system(t_max=t_max, dt=dt, a=a2, I=I2)
 a3 = -0.1
 I3 = 0.5
 t3, v3, w3 = simulate_system(t_max=t_max, dt=dt, a=a3, I=I3)
-
 
 plot_simulation(t1, v1, w1, a1, I1, sim_number=1)
 plot_simulation(t2, v2, w2, a2, I2, sim_number=2)
