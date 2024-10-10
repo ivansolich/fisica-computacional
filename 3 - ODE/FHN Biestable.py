@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-gamma = 0.5
-epsilon = 0.01
+gamma = 8
+epsilon = 0.1
 
 
 def f(v, w, a, I):
@@ -49,15 +49,15 @@ def simulate_system(t_max, dt, a, I):
 
 
 def plot_simulation(t, v, w, a, I, sim_number):
-    plt.style.use('seaborn-v0_8-muted')
+    #plt.style.use('seaborn-v0_8-muted')
 
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
 
     plt.figure(figsize=(7, 4))
 
-    plt.plot(t, v, label='Potencial de membrana (v)', color='black')
-    plt.plot(t, w, label='Variable de recuperación (w)', ls="--",color='red')
+    plt.plot(t, v, label='Potencial de membrana (v)', color="black")
+    plt.plot(t, w, label='Variable de recuperación (w)', ls="--", color = "red")
     plt.xlabel('Tiempo')
     plt.ylabel('v, w')
     plt.legend()
@@ -70,7 +70,7 @@ def plot_simulation(t, v, w, a, I, sim_number):
 
     plt.tight_layout()
 
-    plt.savefig('soluciones_' + str(sim_number) + '.png')
+    plt.savefig('biestableSoluciones_' + str(sim_number) + '.png')
 
     plt.show()
 
@@ -101,34 +101,22 @@ def plot_simulation(t, v, w, a, I, sim_number):
     plt.xlabel('v')
     plt.ylabel('w')
 
-    margin_w = 0.1 * (np.max(w) - np.min(w))
-    plt.ylim(np.min(w) - margin_w, np.max(w) + margin_w)
+    #margin_w = 0.1 * (np.max(w) - np.min(w))
+    #plt.ylim(np.min(w) - margin_w, np.max(w) + margin_w)
 
     plt.tight_layout()
 
-    plt.savefig('diagramaDeFases_' + str(sim_number) + '.png')
+    plt.savefig('Biestable_' + str(sim_number) + '.png')
 
     plt.show()
 
 
-t_max = 500
+t_max = 20
 dt = 0.1
 
 # Simulación 1
-a1 = -0.1
+a1 = 0.2
 I1 = 0.0
 t1, v1, w1 = simulate_system(t_max=t_max, dt=dt, a=a1, I=I1)
 
-# Simulación 2
-a2 = 0.1
-I2 = 0.0
-t2, v2, w2 = simulate_system(t_max=t_max, dt=dt, a=a2, I=I2)
-
-# Simulación 3
-a3 = -0.1
-I3 = 0.5
-t3, v3, w3 = simulate_system(t_max=t_max, dt=dt, a=a3, I=I3)
-
 plot_simulation(t1, v1, w1, a1, I1, sim_number=1)
-plot_simulation(t2, v2, w2, a2, I2, sim_number=2)
-plot_simulation(t3, v3, w3, a3, I3, sim_number=3)
