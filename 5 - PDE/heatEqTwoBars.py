@@ -18,20 +18,18 @@ class HeatEquation:
         self.Tpl = np.zeros((2 * self.Nx - 1, 31))  # Matriz para guardar temperaturas en diferentes momentos
 
     def calculate(self):
-        # Constante para el cálculo de diferencias finitas
         const = (self.KAPPA / (self.SPH * self.RHO)) * (self.Dt / (self.Dx * self.Dx))
         print(f"Constante calculada: {const} (debería ser <= 0.5 para estabilidad)")
 
-        # Inicialización de la matriz de temperatura para ambas barras
         T = np.zeros((2 * self.Nx - 1, 2))  # Temperatura en cada punto espacial para dos tiempos (presente y pasado)
 
         # Condiciones iniciales: barra izquierda a 100 K, barra derecha a 50 K
         for i in range(1, self.Nx - 1):
             T[i, 0] = 100  # Barra izquierda
         for i in range(self.Nx, 2 * self.Nx - 2):
-            T[i, 0] = 50  # Barra derecha
-        T[0, 0] = T[0, 1] = 0  # Extremo izquierdo en contacto a 0 K
-        T[-1, 0] = T[-1, 1] = 0  # Extremo derecho en contacto a 0 K
+            T[i, 0] = 50
+        T[0, 0] = T[0, 1] = 0
+        T[-1, 0] = T[-1, 1] = 0
 
         # Proceso iterativo para resolver la ecuación de calor con contacto y enfriamiento
         print("Working, wait for figure after count to 10")
@@ -59,10 +57,9 @@ class HeatEquation:
                 T[i, 0] = T[i, 1]
 
     def plotting(self):
-        # Crear una malla para graficar
         x = np.linspace(0, 2 * self.L, 2 * self.Nx - 1)[1::2]  # Posiciones espaciales, solo cada segundo punto
         y = np.linspace(0, int(self.stepFactor * 1000 * 0.9 / self.Dt) * self.Dt, 31)  # Tiempos seleccionados
-        X, Y = np.meshgrid(x, y)  # Crear malla de posición y tiempo
+        X, Y = np.meshgrid(x, y)
         Z = self.Tpl[1::2, :].T  # Matriz de temperatura transpuesta para la gráfica
 
         # Graficar superficie de temperatura en función de posición y tiempo
@@ -103,7 +100,6 @@ class HeatEquation:
         plt.title('Isotermas de temperatura')
         plt.show()
 
-# Crear instancia y calcular la ecuación de calor para el hierro con enfriamiento de Newton
-barraFe = HeatEquation(80.4, 449, 7874, 6, h=0.1, Te=20)  # Coeficiente h y temperatura ambiente Te
+barraFe = HeatEquation(80.4, 449, 7874, 6, h=0.1, Te=20)
 barraFe.calculate()
 barraFe.plotting()

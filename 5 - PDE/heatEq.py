@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+
 class heatEquation:
     def __init__(self, KAPPA, SPH, RHO, stepFactor):
         # Parámetros dados
@@ -23,9 +24,9 @@ class heatEquation:
 
         # Inicialización de la matriz de temperatura
         for i in range(1, self.Nx - 1):
-            self.T[i, 0] = 100  # Inicializar con 100 K en el interior de la barra
-        self.T[0, 0] = self.T[0, 1] = 0  # Extremo izquierdo a 0 K
-        self.T[self.Nx - 1, 0] = self.T[self.Nx - 1, 1] = 0  # Extremo derecho a 0 K
+            self.T[i, 0] = 100
+        self.T[0, 0] = self.T[0, 1] = 0
+        self.T[self.Nx - 1, 0] = self.T[self.Nx - 1, 1] = 0
 
         # Proceso iterativo para resolver la ecuación de calor
         m = 0  # Contador para filas, una cada 450 pasos de tiempo
@@ -44,11 +45,11 @@ class heatEquation:
                 self.T[i, 0] = self.T[i, 1]
 
     def plotting(self):
-        # Crear una malla para graficar
+
         x = np.linspace(0, self.L, self.Nx)[1::2]  # Posiciones espaciales, solo cada segundo punto
-        y = np.linspace(0, int(self.stepFactor * 1000 * 0.9 / self.Dt) * self.Dt, 31)  # Tiempos seleccionados
+        y = np.linspace(0, int(self.stepFactor * 1000 * 0.9 / self.Dt) * self.Dt, 31)
         X, Y = np.meshgrid(x, y)  # Crear malla de posición y tiempo
-        Z = self.Tpl[1::2, :].T  # Matriz de temperatura transpuesta para la gráfica
+        Z = self.Tpl[1::2, :].T
 
         # Graficar superficie de temperatura en función de posición y tiempo
         fig = plt.figure()
@@ -99,13 +100,13 @@ class heatEquation:
         plt.show()
 
     def plot_theoretical_solution(self):
-        # Crear malla para la solución teórica
+
         x = np.linspace(0, self.L, self.Nx)[1::2]  # Posiciones espaciales
         y = np.linspace(0, int(self.stepFactor * 1000 * 0.9 / self.Dt) * self.Dt, 31)  # Tiempos seleccionados
         X, Y = np.meshgrid(x, y)
 
-        # Calcular la solución teórica en cada punto (x, t)
-        Z_theoretical = np.sin((np.pi * X) / self.L) * np.exp((-np.pi ** 2 * self.KAPPA * Y) / (self.L ** 2 * self.RHO * self.SPH))
+        Z_theoretical = np.sin((np.pi * X) / self.L) * np.exp(
+            (-np.pi ** 2 * self.KAPPA * Y) / (self.L ** 2 * self.RHO * self.SPH))
 
         # Graficar la solución teórica en una superficie 3D
         fig = plt.figure()
@@ -134,7 +135,8 @@ class heatEquation:
     def plot_relative_error(self):
         # Calcular el valor teórico en t = 1000 segundos
         x = np.linspace(0, self.L, self.Nx)[1::2]
-        T_theoretical = np.sin((np.pi * x) / self.L) * np.exp((-np.pi ** 2 * self.KAPPA * 1000) / (self.L ** 2 * self.RHO * self.SPH))
+        T_theoretical = np.sin((np.pi * x) / self.L) * np.exp(
+            (-np.pi ** 2 * self.KAPPA * 1000) / (self.L ** 2 * self.RHO * self.SPH))
 
         # Obtener el valor numérico en t = 1000 segundos de la matriz Tpl
         T_numerical = self.Tpl[1::2, -1]
@@ -153,7 +155,7 @@ class heatEquation:
         plt.savefig("ErrorRelativo.png", dpi=300)
         plt.show()
 
-# Crear instancia y calcular la ecuación de calor para el aluminio
+
 barraAl = heatEquation(237, 900, 2700, 4.5)
 barraAl.calculate()
 barraAl.plotting()
